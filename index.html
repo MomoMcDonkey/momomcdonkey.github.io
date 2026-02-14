@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portfolio | Minecraft Dev & Mod</title>
+    <title>Portfolio | MOMOMCDONKEY</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
@@ -26,7 +26,7 @@
         }
 
         .container {
-            max-width: 800px;
+            max-width: 1000px; /* Slightly wider to fit 3 cards better */
             margin: 80px auto;
         }
 
@@ -40,29 +40,51 @@
         .tagline { color: var(--accent); font-weight: 600; text-transform: uppercase; letter-spacing: 2px; }
 
         /* Sections */
-        section { margin-bottom: 50px; }
+        section { margin-bottom: 70px; }
         h2 { border-left: 4px solid var(--accent); padding-left: 15px; margin-bottom: 25px; font-size: 1.5rem; }
 
-        /* Cards */
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        /* Cards & Grid */
+        .grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+            gap: 25px; 
+        }
+
         .card {
             background: var(--card-bg);
-            padding: 25px;
+            padding: 20px;
             border-radius: 12px;
             border: 1px solid #333;
-            transition: transform 0.2s;
+            transition: transform 0.2s, border-color 0.2s;
+            display: flex;
+            flex-direction: column;
         }
-        .card:hover { transform: translateY(-5px); border-color: var(--accent); }
-        .card h3 { margin-bottom: 10px; color: var(--accent); }
-        .card p { color: var(--text-dim); font-size: 0.95rem; }
+
+        .card:hover { 
+            transform: translateY(-5px); 
+            border-color: var(--accent); 
+        }
+
+        /* Image Styling */
+        .card-img {
+            width: 100%;
+            height: 160px;
+            object-fit: cover; /* Keeps image from stretching */
+            border-radius: 8px;
+            margin-bottom: 15px;
+            background: #222; /* Fallback color */
+        }
+
+        .card h3 { margin-bottom: 10px; color: var(--accent); font-size: 1.2rem; }
+        .card p { color: var(--text-dim); font-size: 0.9rem; flex-grow: 1; }
 
         /* Skills Tags */
-        .tags { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px; }
+        .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 15px; }
         .tag {
             background: #333;
-            padding: 5px 12px;
+            padding: 4px 10px;
             border-radius: 20px;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: var(--text-main);
         }
 
@@ -70,19 +92,20 @@
         .btn {
             display: inline-block;
             background: var(--accent);
-            color: #000;
+            color: #fff;
             padding: 12px 30px;
             border-radius: 8px;
             text-decoration: none;
             font-weight: 700;
             margin-top: 20px;
             cursor: pointer;
+            transition: opacity 0.2s;
         }
         .btn:hover { opacity: 0.9; }
 
         footer { text-align: center; color: var(--text-dim); font-size: 0.8rem; margin-top: 100px; padding-bottom: 40px; }
 
-        /* Simple JS reveal animation */
+        /* Scroll animation */
         .reveal { opacity: 0; transform: translateY(20px); transition: 0.6s all ease-out; }
         .reveal.active { opacity: 1; transform: translateY(0); }
     </style>
@@ -96,31 +119,48 @@
     </header>
 
     <section class="reveal">
-        <h2>Development Expertise</h2>
+        <h2>Technical Skills</h2>
         <div class="grid">
             <div class="card">
                 <h3>Skript Development</h3>
-                <p>Creating custom Skripts for many different things.</p>
+                <p>Creating custom Skripts to enhance gameplay, automate tasks, and create unique server features.</p>
                 <div class="tags">
                     <span class="tag">Skript</span>
+                    <span class="tag">Automation</span>
                 </div>
             </div>
             <div class="card">
                 <h3>Plugin Configuration</h3>
-                <p>Configuring many different plugins to make them perfect for the server.</p>
+                <p>Expertly configuring Spigot and Paper plugins to ensure peak performance and balanced gameplay.</p>
                 <div class="tags">
                     <span class="tag">Spigot</span>
                     <span class="tag">Paper</span>
+                    <span class="tag">Optimization</span>
                 </div>
             </div>
         </div>
     </section>
 
     <section class="reveal">
-        <h2>Experience</h2>
-        <div class="card" style="width: 100%;">
-            <h3>The Diamond Network (2024-Present)</h3>
-            <p>Managing a community of 200+ concurrent players. Responsible for staff training, conflict resolution, and bug reporting.</p>
+        <h2>Past Experiences</h2>
+        <div class="grid">
+            <div class="card">
+                <img src="https://via.placeholder.com/400x200" alt="Server 1" class="card-img">
+                <h3>The Diamond Network</h3>
+                <p>Senior Moderator: Managed 200+ players, handled high-level player disputes, and assisted in bug reporting and staff training.</p>
+            </div>
+
+            <div class="card">
+                <img src="https://via.placeholder.com/400x200" alt="Server 2" class="card-img">
+                <h3>Survival Evolved</h3>
+                <p>Lead Developer: Developed a custom economy system using Skript and optimized over 50+ plugins for a lag-free experience.</p>
+            </div>
+
+            <div class="card">
+                <img src="https://via.placeholder.com/400x200" alt="Server 3" class="card-img">
+                <h3>Creative Realms</h3>
+                <p>Helper & Configurator: Assisted in community management and setup the initial permissions and ranks system.</p>
+            </div>
         </div>
     </section>
 
@@ -132,28 +172,26 @@
     </section>
 
     <footer>
-        &copy; 2026 Your Name • Built for the Minecraft Community
+        &copy; 2026 MOMOMCDONKEY • Built for the Minecraft Community
     </footer>
 </div>
 
 <script>
-    // Copy Discord Function
     function copyDiscord() {
-        const tag = "YourDiscord#0000"; // CHANGE THIS
+        const tag = "YourDiscord#0000"; // CHANGE THIS TO YOUR DISCORD
         navigator.clipboard.writeText(tag);
         const msg = document.getElementById('copy-msg');
         msg.style.display = 'block';
         setTimeout(() => { msg.style.display = 'none'; }, 2000);
     }
 
-    // Scroll Animation
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 entry.target.classList.add('active');
             }
         });
-    });
+    }, { threshold: 0.1 });
 
     document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
 </script>
