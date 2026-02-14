@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portfolio | MOMOMCDONKEY</title>
+    <title>MomoMcDonkey | Portfolio</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
@@ -26,11 +26,10 @@
         }
 
         .container {
-            max-width: 1000px; /* Slightly wider to fit 3 cards better */
+            max-width: 850px;
             margin: 80px auto;
         }
 
-        /* Header */
         header {
             text-align: center;
             margin-bottom: 60px;
@@ -39,56 +38,70 @@
         h1 { font-size: 3rem; font-weight: 800; margin-bottom: 10px; }
         .tagline { color: var(--accent); font-weight: 600; text-transform: uppercase; letter-spacing: 2px; }
 
-        /* Sections */
         section { margin-bottom: 70px; }
-        h2 { border-left: 4px solid var(--accent); padding-left: 15px; margin-bottom: 25px; font-size: 1.5rem; }
+        h2 { border-left: 4px solid var(--accent); padding-left: 15px; margin-bottom: 30px; font-size: 1.5rem; }
 
-        /* Cards & Grid */
-        .grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
-            gap: 25px; 
+        /* Experience List Layout */
+        .exp-list {
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
         }
 
-        .card {
+        .exp-item {
+            display: flex;
+            gap: 25px;
+            align-items: flex-start;
             background: var(--card-bg);
             padding: 20px;
             border-radius: 12px;
             border: 1px solid #333;
-            transition: transform 0.2s, border-color 0.2s;
-            display: flex;
-            flex-direction: column;
+            transition: border-color 0.3s;
         }
 
-        .card:hover { 
-            transform: translateY(-5px); 
-            border-color: var(--accent); 
+        .exp-item:hover {
+            border-color: var(--accent);
         }
 
-        /* Image Styling */
-        .card-img {
-            width: 100%;
-            height: 160px;
-            object-fit: cover; /* Keeps image from stretching */
-            border-radius: 8px;
-            margin-bottom: 15px;
-            background: #222; /* Fallback color */
+        .exp-img {
+            width: 120px;
+            height: 120px;
+            min-width: 120px; /* Prevents shrinking */
+            border-radius: 10px;
+            object-fit: cover;
+            background: #222;
         }
 
-        .card h3 { margin-bottom: 10px; color: var(--accent); font-size: 1.2rem; }
-        .card p { color: var(--text-dim); font-size: 0.9rem; flex-grow: 1; }
-
-        /* Skills Tags */
-        .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 15px; }
-        .tag {
-            background: #333;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            color: var(--text-main);
+        .exp-content h3 {
+            font-size: 1.4rem;
+            color: var(--accent);
+            margin-bottom: 8px;
         }
 
-        /* Contact Button */
+        .exp-content p {
+            color: var(--text-dim);
+            font-size: 1rem;
+        }
+
+        /* Mobile adjustment for the list */
+        @media (max-width: 600px) {
+            .exp-item {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+            .exp-img {
+                width: 100%;
+                height: 180px;
+            }
+        }
+
+        /* Skills/Tags */
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .skill-card { background: var(--card-bg); padding: 20px; border-radius: 12px; border: 1px solid #333; }
+        .tag { background: #333; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; margin-right: 5px; }
+
+        /* Footer & Button */
         .btn {
             display: inline-block;
             background: var(--accent);
@@ -99,13 +112,10 @@
             font-weight: 700;
             margin-top: 20px;
             cursor: pointer;
-            transition: opacity 0.2s;
         }
-        .btn:hover { opacity: 0.9; }
 
         footer { text-align: center; color: var(--text-dim); font-size: 0.8rem; margin-top: 100px; padding-bottom: 40px; }
 
-        /* Scroll animation */
         .reveal { opacity: 0; transform: translateY(20px); transition: 0.6s all ease-out; }
         .reveal.active { opacity: 1; transform: translateY(0); }
     </style>
@@ -121,46 +131,45 @@
     <section class="reveal">
         <h2>Technical Skills</h2>
         <div class="grid">
-            <div class="card">
-                <h3>Skript Development</h3>
-                <p>Creating custom Skripts to enhance gameplay, automate tasks, and create unique server features.</p>
-                <div class="tags">
-                    <span class="tag">Skript</span>
-                    <span class="tag">Automation</span>
-                </div>
+            <div class="skill-card">
+                <h3>Skript</h3>
+                <p style="font-size: 0.9rem; color: var(--text-dim);">Custom gameplay mechanics and automation.</p>
             </div>
-            <div class="card">
-                <h3>Plugin Configuration</h3>
-                <p>Expertly configuring Spigot and Paper plugins to ensure peak performance and balanced gameplay.</p>
-                <div class="tags">
-                    <span class="tag">Spigot</span>
-                    <span class="tag">Paper</span>
-                    <span class="tag">Optimization</span>
-                </div>
+            <div class="skill-card">
+                <h3>Config</h3>
+                <p style="font-size: 0.9rem; color: var(--text-dim);">Advanced Spigot/Paper plugin setup.</p>
             </div>
         </div>
     </section>
 
     <section class="reveal">
         <h2>Past Experiences</h2>
-        <div class="grid">
-            <div class="card">
-                <img src="https://via.placeholder.com/400x200" alt="Server 1" class="card-img">
-                <h3>The Diamond Network</h3>
-                <p>Senior Moderator: Managed 200+ players, handled high-level player disputes, and assisted in bug reporting and staff training.</p>
+        <div class="exp-list">
+            
+            <div class="exp-item">
+                <img src="https://via.placeholder.com/150" alt="Server Logo" class="exp-img">
+                <div class="exp-content">
+                    <h3>The Diamond Network</h3>
+                    <p>Served as a Senior Moderator managing a peak of 200+ concurrent players. Handled complex player disputes, staff recruitment, and identified critical server exploits.</p>
+                </div>
             </div>
 
-            <div class="card">
-                <img src="https://via.placeholder.com/400x200" alt="Server 2" class="card-img">
-                <h3>Survival Evolved</h3>
-                <p>Lead Developer: Developed a custom economy system using Skript and optimized over 50+ plugins for a lag-free experience.</p>
+            <div class="exp-item">
+                <img src="https://via.placeholder.com/150" alt="Server Logo" class="exp-img">
+                <div class="exp-content">
+                    <h3>Survival Evolved</h3>
+                    <p>Lead Configurator for a custom SMP. Implemented a unique tiered economy system and optimized anti-cheat configurations to ensure fair play.</p>
+                </div>
             </div>
 
-            <div class="card">
-                <img src="https://via.placeholder.com/400x200" alt="Server 3" class="card-img">
-                <h3>Creative Realms</h3>
-                <p>Helper & Configurator: Assisted in community management and setup the initial permissions and ranks system.</p>
+            <div class="exp-item">
+                <img src="https://via.placeholder.com/150" alt="Server Logo" class="exp-img">
+                <div class="exp-content">
+                    <h3>Creative Realms</h3>
+                    <p>General staff member and Skript developer. Built a custom automated plot-clearing system and moderated the creative build competitions.</p>
+                </div>
             </div>
+
         </div>
     </section>
 
@@ -172,13 +181,13 @@
     </section>
 
     <footer>
-        &copy; 2026 MOMOMCDONKEY • Built for the Minecraft Community
+        &copy; 2026 MOMOMCDONKEY • Minecraft Portfolio
     </footer>
 </div>
 
 <script>
     function copyDiscord() {
-        const tag = "YourDiscord#0000"; // CHANGE THIS TO YOUR DISCORD
+        const tag = "YourDiscord#0000"; 
         navigator.clipboard.writeText(tag);
         const msg = document.getElementById('copy-msg');
         msg.style.display = 'block';
@@ -191,8 +200,7 @@
                 entry.target.classList.add('active');
             }
         });
-    }, { threshold: 0.1 });
-
+    });
     document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
 </script>
 
