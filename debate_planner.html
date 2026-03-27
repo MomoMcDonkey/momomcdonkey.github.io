@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Debate Round Planner</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #07090f;
+      min-height: 100vh;
+      padding: 28px 20px;
+      color: #e2e8f0;
+    }
+
+    #app { max-width: 640px; margin: 0 auto; }
+
+    /* ── Header ── */
+    #header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 28px;
+    }
+    #header .eyebrow {
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      color: #374151;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    #header h1 {
+      font-size: 24px;
+      font-weight: 800;
+      color: #f8fafc;
+      letter-spacing: -0.4px;
+    }
+    #subtitle {
+      margin-top: 6px;
+      font-size: 12px;
+      color: #374151;
+    }
+    #undo-btn {
+      margin-top: 4px;
+      padding: 6px 14px;
+      border-radius: 7px;
+      font-size: 11px;
+      font-weight: 600;
+      border: 1px solid #1e293b;
+      background: transparent;
+      color: #374151;
+      cursor: pointer;
+    }
+    #undo-btn:disabled { color: #1e293b; cursor: not-allowed; }
+
+    /* ── Side pips ── */
+    #pips {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 24px;
+      align-items: center;
+    }
+    .pip-group { display: flex; align-items: center; gap: 7px; }
+    .pip-label {
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      width: 32px;
+    }
+    .pip-label.prop { color: #3b82f6; }
+    .pip-label.opp  { color: #ef4444; }
+    .pips { display: flex; gap: 4px; }
+    .pip {
+      width: 22px; height: 6px; border-radius: 3px;
+      background: #111827;
+      transition: background 0.25s, box-shadow 0.25s;
+    }
+    .pip.prop.filled { background: #3b82f6; box-shadow: 0 0 8px #3b82f688; }
+    .pip.opp.filled  { background: #ef4444; box-shadow: 0 0 8px #ef444488; }
+
+    /* ── Round cards ── */
+    #rounds { display: flex; flex-direction: column; gap: 6px; }
+
+    .round-card {
+      border-radius: 12px;
+      border: 1.5px solid #0d1117;
+      background: #0a0a0a;
+      transition: all 0.2s;
+      overflow: hidden;
+    }
+    .round-card.future { opacity: 0.35; }
+    .round-card.current { border-color: #334155; background: #0f1420; }
+    .round-card.locked-prop { border-color: #1d4ed866; background: #04091a; }
+    .round-card.locked-opp  { border-color: #991b1b66; background: #100303; }
+
+    .round-inner {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 18px;
+      flex-wrap: wrap;
+    }
+
+    .round-meta { min-width: 66px; }
+    .round-num  { font-size: 15px; font-weight: 800; color: #374151; }
+    .round-card.current  .round-num { color: #f1f5f9; }
+    .round-card.locked-prop .round-num,
+    .round-card.locked-opp  .round-num { color: #94a3b8; }
+    .round-type {
+      font-size: 9px; font-weight: 700; margin-top: 2px;
+      text-transform: uppercase; letter-spacing: 0.08em; color: #1e293b;
+    }
+    .round-type.prepared { color: #c2410c; }
+
+    /* Side badge (locked) */
+    .side-badge {
+      padding: 4px 12px; border-radius: 6px;
+      font-size: 11px; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.1em;
+    }
+    .side-badge.prop {
+      background: #1d4ed833; color: #3b82f6; border: 1px solid #1d4ed855;
+    }
+    .side-badge.opp {
+      background: #991b1b33; color: #ef4444; border: 1px solid #991b1b55;
+    }
+
+    /* Speakers (locked) */
+    .speakers { display: flex; gap: 0; flex: 1; }
+    .speaker-col {
+      display: flex; flex-direction: column; gap: 2px;
+      padding-right: 18px;
+    }
+    .speaker-col:not(:first-child) { padding-left: 18px; border-left: 1px solid #1e293b44; }
+    .speaker-col:last-child { padding-right: 0; }
+    .pos-label {
+      font-size: 9px; color: #1e293b;
+      text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700;
+    }
+    .speaker-row { display: flex; align-items: center; gap: 5px; }
+    .speaker-dot {
+      width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
+    }
+    .speaker-name { font-size: 14px; font-weight: 700; }
+
+    /* Pick buttons (current) */
+    .pick-btns { display: flex; gap: 8px; align-items: center; flex: 1; }
+    .pick-btn {
+      padding: 10px 28px; border-radius: 8px;
+      font-size: 13px; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      cursor: pointer; transition: all 0.15s;
+    }
+    .pick-btn.prop {
+      border: 1.5px solid #3b82f688;
+      background: #3b82f615; color: #3b82f6;
+    }
+    .pick-btn.prop.forced {
+      border-color: #3b82f6; background: #3b82f6;
+      color: #fff; box-shadow: 0 0 16px #3b82f655;
+    }
+    .pick-btn.prop.blocked {
+      border-color: #1e293b; background: transparent;
+      color: #1e293b; cursor: not-allowed;
+    }
+    .pick-btn.opp {
+      border: 1.5px solid #ef444488;
+      background: #ef444415; color: #ef4444;
+    }
+    .pick-btn.opp.forced {
+      border-color: #ef4444; background: #ef4444;
+      color: #fff; box-shadow: 0 0 16px #ef444455;
+    }
+    .pick-btn.opp.blocked {
+      border-color: #1e293b; background: transparent;
+      color: #1e293b; cursor: not-allowed;
+    }
+    .forced-note { font-size: 10px; color: #374151; font-style: italic; margin-left: 4px; }
+
+    /* Done banner */
+    #done-banner {
+      display: none;
+      margin-top: 20px; border-radius: 10px; padding: 16px 20px;
+      background: #052e16; border: 1.5px solid #166534;
+      box-shadow: 0 0 30px #22c55e18;
+      justify-content: space-between; align-items: center;
+    }
+    #done-banner.visible { display: flex; }
+    #done-title {
+      font-size: 11px; font-weight: 800; color: #4ade80;
+      text-transform: uppercase; letter-spacing: 0.14em; margin-bottom: 2px;
+    }
+    #done-sub { font-size: 11px; color: #166534; }
+    #restart-btn {
+      padding: 7px 16px; border-radius: 7px; font-size: 11px; font-weight: 700;
+      border: 1px solid #166534; background: transparent; color: #4ade80; cursor: pointer;
+    }
+
+    /* Color key */
+    #key { margin-top: 20px; display: flex; gap: 18px; flex-wrap: wrap; }
+    .key-item { display: flex; align-items: center; gap: 6px; }
+    .key-dot { width: 7px; height: 7px; border-radius: 50%; }
+    .key-name { font-size: 11px; font-weight: 600; }
+  </style>
+</head>
+<body>
+<div id="app">
+
+  <!-- Header -->
+  <div id="header">
+    <div>
+      <div class="eyebrow">Debate Tournament · 5 Rounds</div>
+      <h1>Round Planner</h1>
+      <p id="subtitle">Pick your side for Round 1 to begin.</p>
+    </div>
+    <button id="undo-btn" disabled>↺ Undo</button>
+  </div>
+
+  <!-- Pips -->
+  <div id="pips">
+    <div class="pip-group">
+      <span class="pip-label prop">Prop</span>
+      <div class="pips" id="prop-pips">
+        <div class="pip prop"></div>
+        <div class="pip prop"></div>
+        <div class="pip prop"></div>
+      </div>
+    </div>
+    <div class="pip-group">
+      <span class="pip-label opp">Opp</span>
+      <div class="pips" id="opp-pips">
+        <div class="pip opp"></div>
+        <div class="pip opp"></div>
+        <div class="pip opp"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Round cards -->
+  <div id="rounds"></div>
+
+  <!-- Done banner -->
+  <div id="done-banner">
+    <div>
+      <div id="done-title">✓ All Rounds Set</div>
+      <div id="done-sub"></div>
+    </div>
+    <button id="restart-btn">Start Over</button>
+  </div>
+
+  <!-- Key -->
+  <div id="key"></div>
+</div>
+
+<script>
+  // ── Data ────────────────────────────────────────────────────────────
+  const PREPARED = new Set([2, 3]);
+
+  const POOLS = {
+    impromptu: {
+      prop: { first: ["Yaoyao","Micah"], second: ["Micah","Tyler"],  third: ["Salina","Luke"] },
+      opp:  { first: ["Yaoyao","Micah"], second: ["Tyler","Luke"],   third: ["Salina","Luke"] },
+    },
+    prepared: {
+      prop: { first: ["Yaoyao"],         second: ["Micah","Tyler"],  third: ["Salina","Luke"] },
+      opp:  { first: ["Yaoyao"],         second: ["Tyler","Luke"],   third: ["Salina","Luke"] },
+    },
+  };
+
+  const REQUIRED = {
+    first:  { Yaoyao: 3, Micah: 2 },
+    second: { Micah: 1, Tyler: 3, Luke: 1 },
+    third:  { Salina: 3, Luke: 2 },
+  };
+
+  const COLORS = {
+    Yaoyao: { main: "#a78bfa", text: "#c4b5fd" },
+    Micah:  { main: "#60a5fa", text: "#93c5fd" },
+    Tyler:  { main: "#34d399", text: "#6ee7b7" },
+    Luke:   { main: "#fbbf24", text: "#fcd34d" },
+    Salina: { main: "#f472b6", text: "#f9a8d4" },
+  };
+
+  // ── State ────────────────────────────────────────────────────────────
+  // rounds[i] = null | { side, first, second, third }
+  let rounds = Array(5).fill(null);
+
+  // ── Solver ───────────────────────────────────────────────────────────
+  function validate(asgn) {
+    const c = { first: {}, second: {}, third: {} };
+    asgn.forEach(a => {
+      ["first","second","third"].forEach(pos => {
+        c[pos][a[pos]] = (c[pos][a[pos]] || 0) + 1;
+      });
+    });
+    const propCount = asgn.filter(a => a.side === "prop").length;
+    return (
+      propCount >= 2 && propCount <= 3 &&
+      Object.entries(REQUIRED).every(([pos, map]) =>
+        Object.entries(map).every(([p, n]) => (c[pos][p] || 0) === n)
+      )
+    );
+  }
+
+  function solve(locked, newSide, newIdx) {
+    function bt(r, asgn) {
+      if (r === 5) return validate(asgn) ? asgn : null;
+      if (r < newIdx) return bt(r + 1, [...asgn, locked[r]]);
+
+      const propSoFar = asgn.filter(a => a.side === "prop").length;
+      const oppSoFar  = asgn.filter(a => a.side === "opp").length;
+      const sidesToTry = r === newIdx ? [newSide] : ["prop","opp"];
+
+      for (const side of sidesToTry) {
+        if (side === "prop" && propSoFar >= 3) continue;
+        if (side === "opp"  && oppSoFar  >= 3) continue;
+        const type = PREPARED.has(r + 1) ? "prepared" : "impromptu";
+        const pool = POOLS[type][side];
+        for (const f of pool.first)
+          for (const s of pool.second) {
+            if (s === f) continue;
+            for (const t of pool.third) {
+              if (t === f || t === s) continue;
+              const res = bt(r + 1, [...asgn, { side, first: f, second: s, third: t }]);
+              if (res) return res;
+            }
+          }
+      }
+      return null;
+    }
+    return bt(0, []);
+  }
+
+  function canPickSide(side) {
+    const currentIdx = rounds.findIndex(r => r === null);
+    if (currentIdx === -1) return false;
+    const locked = rounds.slice(0, currentIdx).filter(Boolean);
+    return solve(locked, side, currentIdx) !== null;
+  }
+
+  function getSideOptions() {
+    return {
+      prop: canPickSide("prop"),
+      opp: canPickSide("opp"),
+    };
+  }
+
+  function getForcedSide() {
+    const options = getSideOptions();
+    if (options.prop && !options.opp) return "prop";
+    if (options.opp && !options.prop) return "opp";
+    return null;
+  }
+
+  // ── Actions ──────────────────────────────────────────────────────────
+  function pickSide(side) {
+    const currentIdx = rounds.findIndex(r => r === null);
+    if (currentIdx === -1) return;
+    const locked = rounds.slice(0, currentIdx).filter(Boolean);
+    const full = solve(locked, side, currentIdx);
+    if (!full) return;
+    rounds[currentIdx] = full[currentIdx];
+    render();
+  }
+
+  function undo() {
+    for (let i = 4; i >= 0; i--) {
+      if (rounds[i] !== null) { rounds[i] = null; break; }
+    }
+    render();
+  }
+
+  function restart() {
+    rounds = Array(5).fill(null);
+    render();
+  }
+
+  // ── Render ───────────────────────────────────────────────────────────
+  function render() {
+    const currentIdx = rounds.findIndex(r => r === null);
+    const allDone    = currentIdx === -1;
+    const propCount  = rounds.filter(r => r?.side === "prop").length;
+    const oppCount   = rounds.filter(r => r?.side === "opp").length;
+    const setCount   = propCount + oppCount;
+    const sideOptions = getSideOptions();
+    const forced      = getForcedSide();
+
+    // Subtitle
+    const sub = document.getElementById("subtitle");
+    if (allDone) {
+      sub.textContent = "All rounds complete.";
+    } else if (currentIdx === 0) {
+      sub.textContent = "Pick your side for Round 1 to begin.";
+    } else {
+      sub.textContent = `Round ${currentIdx + 1} — pick your side.`;
+    }
+
+    // Undo button
+    document.getElementById("undo-btn").disabled = setCount === 0;
+
+    // Pips
+    ["prop","opp"].forEach(side => {
+      const count = side === "prop" ? propCount : oppCount;
+      document.querySelectorAll(`#${side}-pips .pip`).forEach((pip, i) => {
+        pip.classList.toggle("filled", i < count);
+      });
+    });
+
+    // Rounds
+    const container = document.getElementById("rounds");
+    container.innerHTML = "";
+
+    rounds.forEach((round, i) => {
+      const roundNum   = i + 1;
+      const isPrepared = PREPARED.has(roundNum);
+      const isLocked   = round !== null;
+      const isCurrent  = i === currentIdx;
+      const isFuture   = !isLocked && !isCurrent;
+
+      const card = document.createElement("div");
+      card.className = "round-card " + (
+        isLocked  ? `locked-${round.side}` :
+        isCurrent ? "current" :
+        "future"
+      );
+
+      const inner = document.createElement("div");
+      inner.className = "round-inner";
+
+      // Round meta
+      const meta = document.createElement("div");
+      meta.className = "round-meta";
+      meta.innerHTML = `
+        <div class="round-num">Round ${roundNum}</div>
+        <div class="round-type ${isPrepared ? "prepared" : ""}">${isPrepared ? "Prepared" : "Impromptu"}</div>
+      `;
+      inner.appendChild(meta);
+
+      if (isLocked) {
+        // Side badge
+        const badge = document.createElement("div");
+        badge.className = `side-badge ${round.side}`;
+        badge.textContent = round.side;
+        inner.appendChild(badge);
+
+        // Speakers
+        const speakers = document.createElement("div");
+        speakers.className = "speakers";
+        ["first","second","third"].forEach((pos, pi) => {
+          const name = round[pos];
+          const c = COLORS[name];
+          const col = document.createElement("div");
+          col.className = "speaker-col";
+          col.innerHTML = `
+            <span class="pos-label">${["1st","2nd","3rd"][pi]}</span>
+            <div class="speaker-row">
+              <div class="speaker-dot" style="background:${c.main};box-shadow:0 0 6px ${c.main}"></div>
+              <span class="speaker-name" style="color:${c.text}">${name}</span>
+            </div>
+          `;
+          speakers.appendChild(col);
+        });
+        inner.appendChild(speakers);
+
+      } else if (isCurrent) {
+        const btns = document.createElement("div");
+        btns.className = "pick-btns";
+
+        ["prop","opp"].forEach(s => {
+          const isForced  = forced === s;
+          const isBlocked = !sideOptions[s];
+          const btn = document.createElement("button");
+          btn.className = `pick-btn ${s}${isForced ? " forced" : ""}${isBlocked ? " blocked" : ""}`;
+          btn.textContent = s + (isForced ? " ←" : "");
+          if (!isBlocked) btn.addEventListener("click", () => pickSide(s));
+          btns.appendChild(btn);
+        });
+
+        if (forced) {
+          const note = document.createElement("span");
+          note.className = "forced-note";
+          note.textContent = "only valid option";
+          btns.appendChild(note);
+        }
+
+        inner.appendChild(btns);
+
+      } else {
+        const ph = document.createElement("span");
+        ph.style.cssText = "font-size:12px;color:#1e293b";
+        ph.textContent = "—";
+        inner.appendChild(ph);
+      }
+
+      card.appendChild(inner);
+      container.appendChild(card);
+    });
+
+    // Done banner
+    const banner = document.getElementById("done-banner");
+    if (allDone) {
+      banner.classList.add("visible");
+      document.getElementById("done-sub").textContent =
+        `${propCount} Prop · ${oppCount} Opp · All speaker quotas satisfied`;
+    } else {
+      banner.classList.remove("visible");
+    }
+  }
+
+  // ── Key ──────────────────────────────────────────────────────────────
+  function buildKey() {
+    const key = document.getElementById("key");
+    Object.entries(COLORS).forEach(([name, c]) => {
+      const item = document.createElement("div");
+      item.className = "key-item";
+      item.innerHTML = `
+        <div class="key-dot" style="background:${c.main};box-shadow:0 0 6px ${c.main}"></div>
+        <span class="key-name" style="color:${c.text}">${name}</span>
+      `;
+      key.appendChild(item);
+    });
+  }
+
+  // ── Init ─────────────────────────────────────────────────────────────
+  document.getElementById("undo-btn").addEventListener("click", undo);
+  document.getElementById("restart-btn").addEventListener("click", restart);
+  buildKey();
+  render();
+</script>
+</body>
+</html>
